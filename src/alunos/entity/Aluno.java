@@ -3,16 +3,16 @@ package alunos.entity;
 import java.time.LocalDate;
 
 public class Aluno {
-    private String Id;
+    private long Id;
     private String Ra;
     private String Nome;
     private LocalDate Nascimento;
 
-    public String getId() {
+    public long getId() {
         return Id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         Id = id;
     }
 

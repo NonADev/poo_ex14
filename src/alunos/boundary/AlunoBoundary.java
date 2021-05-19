@@ -3,6 +3,8 @@ package alunos.boundary;
 import alunos.control.AlunoControl;
 import alunos.entity.Aluno;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,7 +15,6 @@ import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
 import java.util.List;
 
 public class AlunoBoundary extends Application {
@@ -32,6 +33,11 @@ public class AlunoBoundary extends Application {
     private final Button btnAdicionar = new Button("Adicionar");
     private final Button btnPesquisar = new Button("Pesquisar");
 
+    private final StringProperty id = new SimpleStringProperty();
+    private final StringProperty nome = new SimpleStringProperty();
+    private final StringProperty ra = new SimpleStringProperty();
+    private final StringProperty nasc = new SimpleStringProperty();
+
     @Override
     public void start(Stage stage) throws Exception {
         Pane pane = new Pane();
@@ -42,10 +48,16 @@ public class AlunoBoundary extends Application {
         lblRa.relocate(0, 30);
         lblNome.relocate(0, 55);
         lblNasc.relocate(0, 80);
+
         txtId.relocate(100, 0);
+        Bindings.bindBidirectional(txtId.textProperty(), id);
         txtRa.relocate(100, 25);
+        Bindings.bindBidirectional(txtRa.textProperty(), ra);
         txtNome.relocate(100, 50);
+        Bindings.bindBidirectional(txtNome.textProperty(), nome);
         txtNasc.relocate(100, 75);
+        Bindings.bindBidirectional(txtNasc.textProperty(), nasc);
+
         btnAdicionar.relocate(0, 120);
         btnAdicionar.setOnAction(this::handle);
         btnPesquisar.relocate(70, 120);
@@ -65,7 +77,7 @@ public class AlunoBoundary extends Application {
             case "Adicionar":
                 Aluno aluno = new Aluno();
                 aluno.setNome(txtNome.getText());
-                aluno.setId(txtId.getText());
+                aluno.setId(Long.parseLong(txtId.getText()));
                 aluno.setRa(txtRa.getText());
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -87,7 +99,7 @@ public class AlunoBoundary extends Application {
 
     }
 
-    public void boundaryToEntity() {
-
+    public Aluno boundaryToEntity() {
+        return new Aluno();
     }
 }
