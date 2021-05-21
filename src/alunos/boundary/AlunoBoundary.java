@@ -8,10 +8,13 @@ import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.util.converter.LocalDateStringConverter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,23 +28,18 @@ public class AlunoBoundary extends Application {
     private final Label lblNome = new Label("Nome:");
     private final Label lblNasc = new Label("Nascimento:");
 
-    private final TextField txtId = new TextField("qwe");
-    private final TextField txtRa = new TextField("qwe");
-    private final TextField txtNome = new TextField("qwe");
-    private final TextField txtNasc = new TextField("08/11/1999");
+    private final TextField txtId = new TextField();
+    private final TextField txtRa = new TextField();
+    private final TextField txtNome = new TextField();
+    private final DatePicker txtNasc = new DatePicker(LocalDate.now());
 
     private final Button btnAdicionar = new Button("Adicionar");
     private final Button btnPesquisar = new Button("Pesquisar");
 
-    private final StringProperty id = new SimpleStringProperty();
-    private final StringProperty nome = new SimpleStringProperty();
-    private final StringProperty ra = new SimpleStringProperty();
-    private final StringProperty nasc = new SimpleStringProperty();
-
     @Override
     public void start(Stage stage) throws Exception {
         Pane pane = new Pane();
-        pane.setPrefSize(300, 150);
+        pane.setPrefSize(300, 700);
         Scene scene = new Scene(pane);
 
         lblId.relocate(0, 5);
@@ -50,20 +48,25 @@ public class AlunoBoundary extends Application {
         lblNasc.relocate(0, 80);
 
         txtId.relocate(100, 0);
-        Bindings.bindBidirectional(txtId.textProperty(), id);
         txtRa.relocate(100, 25);
-        Bindings.bindBidirectional(txtRa.textProperty(), ra);
         txtNome.relocate(100, 50);
-        Bindings.bindBidirectional(txtNome.textProperty(), nome);
         txtNasc.relocate(100, 75);
-        Bindings.bindBidirectional(txtNasc.textProperty(), nasc);
 
         btnAdicionar.relocate(0, 120);
-        btnAdicionar.setOnAction(this::handle);
         btnPesquisar.relocate(70, 120);
+
+        btnAdicionar.setOnAction(this::handle);
         btnPesquisar.setOnAction(this::handle);
 
-        pane.getChildren().addAll(lblId, lblNasc, lblNome, lblRa, txtId, txtNasc, txtNome, txtRa, btnAdicionar, btnPesquisar);
+        Bindings.bindBidirectional(txtId.textProperty(), alunoControl.id);
+        Bindings.bindBidirectional(txtRa.textProperty(), alunoControl.ra);
+        Bindings.bindBidirectional(txtNome.textProperty(), alunoControl.nome);
+        Bindings.bindBidirectional(alunoControl.nasc, txtNasc.valueProperty(), new LocalDateStringConverter());
+
+        alunoControl.generateTable();
+        alunoControl.table.relocate(0,150);
+
+        pane.getChildren().addAll(lblId, lblNasc, lblNome, lblRa, txtId, txtNasc, txtNome, txtRa, btnAdicionar, btnPesquisar, alunoControl.table);
 
         stage.setScene(scene);
         stage.setTitle("Gestão de Alunos");
@@ -79,18 +82,15 @@ public class AlunoBoundary extends Application {
                 aluno.setNome(txtNome.getText());
                 aluno.setId(Long.parseLong(txtId.getText()));
                 aluno.setRa(txtRa.getText());
-
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                aluno.setNascimento(LocalDate.parse(txtNasc.getText(), formatter));
+                aluno.setNascimento(txtNasc.getValue());
 
                 alunoControl.adicionar(aluno);
                 break;
 
             case "Pesquisar":
                 List<Aluno> alunos = alunoControl.pesquisarPorNome(txtNome.getText());
-                System.out.println("=====================================================================");
-                for (Aluno value : alunos) System.out.println(value.getNome());
-                System.out.println("=====================================================================");
+                for (Aluno value : alunos) {
+                }
                 break;
         }
     }
